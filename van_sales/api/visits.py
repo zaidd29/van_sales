@@ -250,6 +250,9 @@ def plan_visit(lead: str, planned_on: str, purpose: str | None = None, sales_per
 	allowed = visible_sales_persons()
 	if allowed is not None and sales_person not in allowed:
 		frappe.throw(_("You cannot plan visits for {0}.").format(sales_person), frappe.PermissionError)
+	if frappe.db.get_value("Sales Person", sales_person, "is_group"):
+		# A manager's own Sales Person is usually the team's group node.
+		frappe.throw(_("{0} is a sales team, not a person. Choose who will visit.").format(sales_person))
 	if get_datetime(planned_on) < get_datetime(nowdate()):
 		frappe.throw(_("A visit cannot be planned in the past."))
 

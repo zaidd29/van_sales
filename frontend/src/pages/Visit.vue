@@ -271,6 +271,9 @@ const formError = ref("")
 const saving = ref(false)
 const cancelOpen = ref(false)
 
+// An error is about the form as it was; once the rep changes it, it is stale.
+watch([form, followUp], () => (formError.value = ""), { deep: true })
+
 watch(followUp, (on) => {
 	if (on && !form.next_visit_on) form.next_visit_on = tomorrowMorning()
 })

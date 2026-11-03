@@ -14,7 +14,7 @@ def execute(filters=None):
 		{"label": _("Completed"), "fieldname": "completed", "fieldtype": "Int", "width": 100},
 		{"label": _("Missed"), "fieldname": "missed", "fieldtype": "Int", "width": 80},
 		{"label": _("Pending"), "fieldname": "pending", "fieldtype": "Int", "width": 80},
-		{"label": _("Completion %"), "fieldname": "completion", "fieldtype": "Percent", "width": 110},
+		{"label": _("Completion %"), "fieldname": "completion", "fieldtype": "Percent", "precision": 1, "width": 110},
 		{"label": _("Unplanned"), "fieldname": "unplanned", "fieldtype": "Int", "width": 90},
 		{"label": _("Out of Range"), "fieldname": "out_of_range", "fieldtype": "Int", "width": 100},
 		{"label": _("Leads Visited"), "fieldname": "leads_visited", "fieldtype": "Int", "width": 100},

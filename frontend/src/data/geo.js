@@ -100,7 +100,10 @@ export function currentPosition() {
 							: "Could not get your location. Step outside or turn on GPS and try again.",
 					),
 				),
-			{ enableHighAccuracy: true, timeout: 15_000, maximumAge: 30_000 },
+			// Never a cached fix: a rep who checks in as they park would be
+			// measured from where they were half a minute and a few hundred
+			// metres ago.
+			{ enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 },
 		)
 	})
 }

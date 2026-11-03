@@ -197,7 +197,10 @@ const planTitle = computed(() =>
 
 function openPlan(lead) {
 	planLead.value = lead
-	plan.sales_person = teamData.data.value?.mine || team.value[0] || ""
+	// A manager's own Sales Person is usually the team's group node, which
+	// cannot hold visits; leaving the choice empty makes them pick the rep.
+	const mine = teamData.data.value?.mine
+	plan.sales_person = team.value.includes(mine) ? mine : team.value.length === 1 ? team.value[0] : ""
 	plan.planned_on = tomorrowMorning()
 	plan.purpose = ""
 	planError.value = ""
@@ -205,6 +208,10 @@ function openPlan(lead) {
 }
 
 async function submitPlan() {
+	if (team.value.length > 1 && !plan.sales_person) {
+		planError.value = "Choose the sales person who will visit."
+		return
+	}
 	if (!plan.planned_on) {
 		planError.value = "Choose when the visit is."
 		return

@@ -352,7 +352,7 @@
 
 <script setup>
 import { Alert, Avatar, Button, Dialog, FeatherIcon, LoadingIndicator, TabButtons } from "frappe-ui"
-import { computed, reactive, ref } from "vue"
+import { computed, reactive, ref, watch } from "vue"
 import { useRouter } from "vue-router"
 
 import EmptyState from "../components/EmptyState.vue"
@@ -417,7 +417,11 @@ function canEditEmployee(field) {
 	return Boolean(d.value?.editable?.employee?.includes(field))
 }
 
-function startEditing() {
+// The read-only view renders the same drafts the edit form writes to, so
+// they are filled as soon as the profile loads -- not only on Edit, which
+// left every field showing "—" until then.
+function fillDrafts() {
+	if (!d.value) return
 	const user = d.value.user
 	Object.assign(draft, {
 		first_name: user.first_name ?? "",
@@ -434,13 +438,19 @@ function startEditing() {
 		emergency_phone_number: employee.emergency_phone_number ?? "",
 		current_address: employee.current_address ?? "",
 	})
+}
 
+watch(d, fillDrafts, { immediate: true })
+
+function startEditing() {
+	fillDrafts()
 	saved.value = false
 	error.value = null
 	editing.value = true
 }
 
 function cancelEditing() {
+	fillDrafts()
 	editing.value = false
 	error.value = null
 }
