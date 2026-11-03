@@ -21,7 +21,10 @@ const routes = [
 		component: () => import("./components/AppShell.vue"),
 		children: [
 			// Van sales
-			{ path: "", name: "gate", redirect: () => ({ name: "van_home" }) },
+			// No `redirect` here: vue-router applies a redirect before any guard
+			// runs, which sent every persona to van_home. The guard below picks
+			// the home the server named.
+			{ path: "", name: "gate", component: { render: () => null } },
 			{ path: "van_home", name: "van_home", component: () => import("./pages/VanHome.vue") },
 			{ path: "invoice", name: "invoice", component: () => import("./pages/Invoice.vue") },
 			{
@@ -64,6 +67,30 @@ const routes = [
 				path: "credit-note/:invoice",
 				name: "credit-note",
 				component: () => import("./pages/CreditNote.vue"),
+			},
+
+			// Lead visits
+			{ path: "visits", name: "visits", component: () => import("./pages/Visits.vue") },
+			{ path: "leads", name: "leads", component: () => import("./pages/Leads.vue") },
+			{
+				path: "visit_history",
+				name: "visit_history",
+				component: () => import("./pages/VisitHistory.vue"),
+			},
+			{
+				path: "visit/:name",
+				name: "visit",
+				component: () => import("./pages/Visit.vue"),
+			},
+			{
+				path: "lead_activity",
+				name: "lead_activity",
+				component: () => import("./pages/LeadActivity.vue"),
+			},
+			{
+				path: "team_visits",
+				name: "team_visits",
+				component: () => import("./pages/TeamVisits.vue"),
 			},
 
 			// Personas whose backends are not built yet. These render what the

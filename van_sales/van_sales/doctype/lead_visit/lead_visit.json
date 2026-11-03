@@ -1,0 +1,346 @@
+{
+ "actions": [],
+ "autoname": "LV-.YYYY.-.#####",
+ "creation": "2026-11-02 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lead",
+  "lead_name",
+  "company_name",
+  "mobile_no",
+  "column_break_head",
+  "sales_person",
+  "visit_type",
+  "status",
+  "planned_on",
+  "purpose",
+  "check_in_section",
+  "check_in_time",
+  "check_in_latitude",
+  "check_in_longitude",
+  "check_in_accuracy",
+  "location_source",
+  "column_break_check_in",
+  "distance_from_lead",
+  "out_of_range",
+  "out_of_range_reason",
+  "map_section",
+  "check_in_map",
+  "outcome_section",
+  "outcome",
+  "next_visit_on",
+  "column_break_outcome",
+  "notes",
+  "check_out_section",
+  "check_out_time",
+  "check_out_latitude",
+  "check_out_longitude",
+  "column_break_check_out",
+  "duration_minutes",
+  "auto_closed",
+  "previous_visit",
+  "followup_visit"
+ ],
+ "fields": [
+  {
+   "fieldname": "lead",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Lead",
+   "options": "Lead",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "lead.lead_name",
+   "fieldname": "lead_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Lead Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lead.company_name",
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Organization",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "lead.mobile_no",
+   "fieldname": "mobile_no",
+   "fieldtype": "Data",
+   "label": "Mobile No",
+   "options": "Phone",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_person",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sales Person",
+   "options": "Sales Person",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Planned",
+   "fieldname": "visit_type",
+   "fieldtype": "Select",
+   "label": "Visit Type",
+   "options": "Planned\nUnplanned\nFollow-up"
+  },
+  {
+   "default": "Planned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Planned\nChecked In\nCompleted\nMissed\nCancelled",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "planned_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Planned On",
+   "search_index": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Small Text",
+   "label": "Purpose"
+  },
+  {
+   "depends_on": "eval:doc.check_in_time",
+   "fieldname": "check_in_section",
+   "fieldtype": "Section Break",
+   "label": "Check-in"
+  },
+  {
+   "fieldname": "check_in_time",
+   "fieldtype": "Datetime",
+   "label": "Check-in Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_in_latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_in_longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_in_accuracy",
+   "fieldtype": "Float",
+   "label": "GPS Accuracy (m)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "location_source",
+   "fieldtype": "Select",
+   "label": "Location Source",
+   "options": "\nDevice GPS\nSimulated (Demo)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_check_in",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "distance_from_lead",
+   "fieldtype": "Float",
+   "label": "Distance from Lead (m)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "out_of_range",
+   "fieldtype": "Check",
+   "in_standard_filter": 1,
+   "label": "Out of Range",
+   "read_only": 1
+  },
+  {
+   "depends_on": "out_of_range",
+   "fieldname": "out_of_range_reason",
+   "fieldtype": "Small Text",
+   "label": "Out of Range Reason",
+   "mandatory_depends_on": "eval:doc.out_of_range && doc.status=='Completed' && !doc.auto_closed"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.check_in_time",
+   "fieldname": "map_section",
+   "fieldtype": "Section Break",
+   "label": "Map"
+  },
+  {
+   "fieldname": "check_in_map",
+   "fieldtype": "Geolocation",
+   "label": "Check-in Location",
+   "read_only": 1
+  },
+  {
+   "fieldname": "outcome_section",
+   "fieldtype": "Section Break",
+   "label": "Visit Outcome"
+  },
+  {
+   "fieldname": "outcome",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Outcome",
+   "options": "\nInterested\nNot Interested\nCall Back\nConverted\nNot Available"
+  },
+  {
+   "fieldname": "next_visit_on",
+   "fieldtype": "Datetime",
+   "label": "Next Visit On"
+  },
+  {
+   "fieldname": "column_break_outcome",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Text",
+   "label": "Notes"
+  },
+  {
+   "depends_on": "eval:doc.check_out_time",
+   "fieldname": "check_out_section",
+   "fieldtype": "Section Break",
+   "label": "Check-out"
+  },
+  {
+   "fieldname": "check_out_time",
+   "fieldtype": "Datetime",
+   "label": "Check-out Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_out_latitude",
+   "fieldtype": "Float",
+   "label": "Latitude",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "check_out_longitude",
+   "fieldtype": "Float",
+   "label": "Longitude",
+   "precision": "6",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_check_out",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration_minutes",
+   "fieldtype": "Int",
+   "label": "Duration (Minutes)",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Visit was left open and closed by the system at the end of the day.",
+   "fieldname": "auto_closed",
+   "fieldtype": "Check",
+   "label": "Auto Closed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "previous_visit",
+   "fieldtype": "Link",
+   "label": "Previous Visit",
+   "options": "Lead Visit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "followup_visit",
+   "fieldtype": "Link",
+   "label": "Follow-up Visit",
+   "options": "Lead Visit",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-11-02 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Van Sales",
+ "name": "Lead Visit",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Field Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Field Sales User",
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager"
+  }
+ ],
+ "search_fields": "lead_name,sales_person",
+ "show_title_field_in_link": 1,
+ "sort_field": "planned_on",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "lead_name",
+ "track_changes": 1
+}
