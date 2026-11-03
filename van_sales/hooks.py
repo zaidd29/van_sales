@@ -1,8 +1,8 @@
 app_name = "van_sales"
 app_title = "Van Sales"
-app_publisher = "Yasir Shaikh"
+app_publisher = "Matiyas Solutions LLP"
 app_description = "Mobile field operations for ERPNext: van sales, pre-sales, logistics, picking and management."
-app_email = "erp.yasirshaikh@gmail.com"
+app_email = "business@matiyas.com"
 app_license = "mit"
 
 # Apps

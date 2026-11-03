@@ -1,4 +1,4 @@
-# Copyright (c) 2026, Yasir Shaikh and contributors
+# Copyright (c) 2026, Matiyas Solutions LLP and contributors
 # For license information, please see license.txt
 
 import frappe

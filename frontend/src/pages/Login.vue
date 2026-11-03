@@ -86,9 +86,9 @@
 					Nothing is configured on the phone.
 				</p>
 				<div class="flex flex-col items-center gap-0.5 border-t border-outline-gray-1 pt-3">
-					<span class="text-p-sm font-medium text-ink-gray-6">by Yasir Shaikh</span>
-					<a href="mailto:erp.yasirshaikh@gmail.com" class="text-p-sm text-ink-blue-link">
-						erp.yasirshaikh@gmail.com
+					<span class="text-p-sm font-medium text-ink-gray-6">by Matiyas Solutions LLP</span>
+					<a href="mailto:business@matiyas.com" class="text-p-sm text-ink-blue-link">
+						business@matiyas.com
 					</a>
 				</div>
 			</footer>

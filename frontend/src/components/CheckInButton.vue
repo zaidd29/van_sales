@@ -16,7 +16,7 @@
 		:loading="busy"
 		@click.stop="start"
 	>
-		{{ label }}
+		{{ locating ? "Finding GPS…" : label }}
 	</Button>
 
 	<Dialog
@@ -61,16 +61,19 @@ const emit = defineEmits(["done"])
 
 const router = useRouter()
 const busy = ref(false)
+const locating = ref(false)
 const simulateOpen = ref(false)
 const simulateReason = ref("")
 
 async function start() {
 	busy.value = true
+	locating.value = true
 	let position
 	try {
 		position = await currentPosition()
 	} catch (error) {
 		busy.value = false
+		locating.value = false
 		if (policy.value.allow_simulated_location) {
 			simulateReason.value = error.message
 			simulateOpen.value = true
@@ -79,6 +82,7 @@ async function start() {
 		}
 		return
 	}
+	locating.value = false
 	await post(position, false)
 }
 

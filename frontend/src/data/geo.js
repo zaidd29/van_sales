@@ -75,8 +75,15 @@ export function captureGeo(enabled) {
  * Unlike `captureGeo` this does wait, and asks for high accuracy: a check-in
  * is measured against where the lead is, so a fix from fifteen minutes and
  * three stops ago would flag the rep as out of range for the wrong reason.
+ * The first fix a phone reports is often its Wi-Fi or cell-tower guess,
+ * hundreds of metres to a kilometre off, with real GPS locking on a few
+ * seconds later. So this watches the position and keeps the most accurate
+ * fix, settling as soon as one is good enough or when time runs out.
  * Rejects with a message the rep can act on.
  */
+const GOOD_ACCURACY_M = 30
+const SETTLE_MS = 12_000
+
 export function currentPosition() {
 	return new Promise((resolve, reject) => {
 		if (!navigator.geolocation) {
@@ -87,25 +94,47 @@ export function currentPosition() {
 				new Error("Location needs a secure (https) address. Ask your administrator."),
 			)
 		}
-		navigator.geolocation.getCurrentPosition(
+
+		let best = null
+		let watchId = null
+		const finish = () => {
+			clearTimeout(timer)
+			navigator.geolocation.clearWatch(watchId)
+			if (!best) {
+				return reject(
+					new Error("Could not get your location. Step outside or turn on GPS and try again."),
+				)
+			}
+			warmFix = { position: best, at: Date.now() }
+			resolve(toGeo(best))
+		}
+		const timer = setTimeout(finish, SETTLE_MS)
+
+		watchId = navigator.geolocation.watchPosition(
 			(position) => {
-				warmFix = { position, at: Date.now() }
-				resolve(toGeo(position))
+				if (!best || position.coords.accuracy < best.coords.accuracy) best = position
+				if (position.coords.accuracy <= GOOD_ACCURACY_M) finish()
 			},
-			(error) =>
+			(error) => {
+				if (error.code !== error.PERMISSION_DENIED) return
+				clearTimeout(timer)
+				navigator.geolocation.clearWatch(watchId)
 				reject(
-					new Error(
-						error.code === error.PERMISSION_DENIED
-							? "Location access is blocked. Allow it for this site in the browser settings."
-							: "Could not get your location. Step outside or turn on GPS and try again.",
-					),
-				),
+					new Error("Location access is blocked. Allow it for this site in the browser settings."),
+				)
+			},
 			// Never a cached fix: a rep who checks in as they park would be
 			// measured from where they were half a minute and a few hundred
 			// metres ago.
-			{ enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 },
+			{ enableHighAccuracy: true, timeout: SETTLE_MS, maximumAge: 0 },
 		)
 	})
+}
+
+/** "±15 m", for showing how far a fix can be trusted. */
+export function accuracyLabel(metres) {
+	if (!metres) return ""
+	return `±${distanceLabel(metres)}`
 }
 
 /** Straight-line metres between two points (haversine), for "450 m away". */

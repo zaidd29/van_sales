@@ -480,12 +480,12 @@ export default function ProfileScreen() {
                     />
                     <View style={{ flex: 1 }}>
                       <Text style={s.aboutTitle}>Van Sales</Text>
-                      <Text style={s.aboutBy}>by Yasir Shaikh</Text>
+                      <Text style={s.aboutBy}>by Matiyas Solutions LLP</Text>
                       <Text
                         style={s.aboutLink}
-                        onPress={() => Linking.openURL('mailto:erp.yasirshaikh@gmail.com')}
+                        onPress={() => Linking.openURL('mailto:business@matiyas.com')}
                       >
-                        erp.yasirshaikh@gmail.com
+                        business@matiyas.com
                       </Text>
                     </View>
                     <Mono size={12} color={colors.faint} weight="500">
