@@ -1,4 +1,4 @@
-# Copyright (c) 2026, Yasir Shaikh and contributors
+# Copyright (c) 2026, Matiyas Solutions LLP and contributors
 # For license information, please see license.txt
 
 import json
@@ -22,6 +22,11 @@ LEAD_STATUS_FOR_OUTCOME = {
 # A visit outcome may move a lead along, but never back from a status that
 # ERPNext set from a real document (Quotation, Customer...).
 LEAD_STATUSES_A_VISIT_MAY_CHANGE = ("Lead", "Open", "Replied", "Interested")
+
+# The roughest fix (metres) that may pin an unmapped lead. A network-based
+# fix indoors can be a kilometre off, and every later visit would be measured
+# against it; the lead stays unpinned until a visit with a better fix.
+MAX_PIN_ACCURACY = 100
 
 
 def visit_settings() -> frappe._dict:
@@ -94,8 +99,16 @@ class LeadVisit(Document):
 			self.distance_from_lead = distance_in_metres(
 				flt(lead.van_latitude), flt(lead.van_longitude), flt(latitude), flt(longitude)
 			)
-			self.out_of_range = cint(self.distance_from_lead > settings.allowed_radius)
-		elif settings.save_lead_location_on_first_visit and not simulated:
+			# The phone may be anywhere inside its accuracy circle, so a rep
+			# standing at the lead is not flagged for GPS drift. The allowance
+			# is capped at the radius: a ±2 km fix cannot prove anything.
+			allowance = min(flt(accuracy), settings.allowed_radius)
+			self.out_of_range = cint(self.distance_from_lead - allowance > settings.allowed_radius)
+		elif (
+			settings.save_lead_location_on_first_visit
+			and not simulated
+			and flt(accuracy) <= MAX_PIN_ACCURACY
+		):
 			# The first visit pins an unmapped lead, so the next one can be verified.
 			frappe.db.set_value(
 				"Lead",

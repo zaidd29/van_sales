@@ -32,6 +32,7 @@ VISIT_FIELDS = [
 	"check_in_time",
 	"check_out_time",
 	"distance_from_lead",
+	"check_in_accuracy",
 	"out_of_range",
 	"out_of_range_reason",
 	"location_source",

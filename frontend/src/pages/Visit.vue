@@ -84,14 +84,21 @@
 					theme="red"
 					title="Out of range"
 					:dismissable="false"
-					:description="`Checked in ${distanceLabel(v.distance_from_lead)} from the lead's location. The allowed radius is ${policy.visit_allowed_radius ?? 200} m.`"
+					:description="`Checked in ${distanceLabel(v.distance_from_lead)} from the lead's location${gpsNote}. The allowed radius is ${policy.visit_allowed_radius ?? 200} m.`"
+				/>
+				<Alert
+					v-else-if="v.check_in_time && !v.lead_latitude"
+					theme="yellow"
+					title="Lead location not saved"
+					:dismissable="false"
+					:description="`The GPS fix was too rough to pin this lead${gpsNote}. The next visit with a clear GPS signal will pin it.`"
 				/>
 				<Alert
 					v-else-if="v.check_in_time && v.distance_from_lead !== null"
 					theme="green"
 					title="At the lead's location"
 					:dismissable="false"
-					:description="`Checked in ${distanceLabel(v.distance_from_lead)} from the lead${v.location_source === 'Simulated (Demo)' ? ' (simulated location)' : ''}.`"
+					:description="`Checked in ${distanceLabel(v.distance_from_lead)} from the lead${v.location_source === 'Simulated (Demo)' ? ' (simulated location)' : gpsNote}.`"
 				/>
 
 				<!-- Planned: go there and check in -->
@@ -242,7 +249,7 @@ import PageHeader from "../components/PageHeader.vue"
 import ScreenBody from "../components/ScreenBody.vue"
 import { api } from "../data/api"
 import { shortDate, timeOfDay } from "../data/format"
-import { captureGeo, distanceLabel } from "../data/geo"
+import { accuracyLabel, captureGeo, distanceLabel } from "../data/geo"
 import { policy } from "../data/session"
 import { useAsync } from "../data/useAsync"
 import {
@@ -264,6 +271,12 @@ const v = computed(() => visit.data.value)
 // A manager can open any visit on their team, but only the rep it belongs
 // to checks in and out of it.
 const canAct = computed(() => Boolean(v.value?.is_mine))
+
+// How far the check-in fix could be off, so a surprising distance can be
+// read as weak GPS rather than the rep being elsewhere.
+const gpsNote = computed(() =>
+	v.value?.check_in_accuracy ? ` (GPS accuracy ${accuracyLabel(v.value.check_in_accuracy)})` : "",
+)
 
 const form = reactive({ outcome: "", notes: "", out_of_range_reason: "", next_visit_on: "" })
 const followUp = ref(false)

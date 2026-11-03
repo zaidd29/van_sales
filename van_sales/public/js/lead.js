@@ -62,6 +62,21 @@ frappe.ui.form.on("Lead", {
 					),
 				__("Lead Visits")
 			);
+
+			// A pin taken from a poor GPS fix makes every later visit look out
+			// of range; clearing it lets the next good check-in pin it again.
+			frm.add_custom_button(
+				__("Reset Visit Location"),
+				() =>
+					frappe.confirm(
+						__("Clear this lead's map location? The next check-in with a clear GPS signal will pin it again."),
+						() => {
+							frm.set_value({ van_latitude: null, van_longitude: null });
+							frm.save();
+						}
+					),
+				__("Lead Visits")
+			);
 		}
 	},
 });

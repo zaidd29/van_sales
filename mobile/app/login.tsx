@@ -165,12 +165,12 @@ export default function Login() {
             phone.
           </Text>
           <View style={s.by}>
-            <Text style={s.byText}>by Yasir Shaikh</Text>
+            <Text style={s.byText}>by Matiyas Solutions LLP</Text>
             <Text
               style={s.byLink}
-              onPress={() => Linking.openURL('mailto:erp.yasirshaikh@gmail.com')}
+              onPress={() => Linking.openURL('mailto:business@matiyas.com')}
             >
-              erp.yasirshaikh@gmail.com
+              business@matiyas.com
             </Text>
           </View>
         </View>

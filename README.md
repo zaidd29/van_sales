@@ -1,6 +1,6 @@
 # Van Sales
 
-By **Yasir Shaikh** — erp.yasirshaikh@gmail.com
+By **Matiyas Solutions LLP** — business@matiyas.com
 
 Mobile field operations for ERPNext: van sales, pre-sales, logistics, picking
 and management, in one app whose screens are decided by the signed-in user's

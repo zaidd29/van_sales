@@ -273,12 +273,12 @@
 						<img :src="logo" alt="" class="h-10 w-10 object-contain" />
 						<div class="min-w-0 flex-1">
 							<p class="text-[14.5px] font-semibold text-ink-gray-8">Van Sales</p>
-							<p class="text-xs text-ink-gray-6">by Yasir Shaikh</p>
+							<p class="text-xs text-ink-gray-6">by Matiyas Solutions LLP</p>
 							<a
-								href="mailto:erp.yasirshaikh@gmail.com"
+								href="mailto:business@matiyas.com"
 								class="text-xs text-ink-blue-2"
 							>
-								erp.yasirshaikh@gmail.com
+								business@matiyas.com
 							</a>
 						</div>
 						<span class="money shrink-0 text-xs font-medium text-ink-gray-5"
