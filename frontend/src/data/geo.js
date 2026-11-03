@@ -69,6 +69,66 @@ export function captureGeo(enabled) {
 	})
 }
 
+/**
+ * A live position, for a visit check-in.
+ *
+ * Unlike `captureGeo` this does wait, and asks for high accuracy: a check-in
+ * is measured against where the lead is, so a fix from fifteen minutes and
+ * three stops ago would flag the rep as out of range for the wrong reason.
+ * Rejects with a message the rep can act on.
+ */
+export function currentPosition() {
+	return new Promise((resolve, reject) => {
+		if (!navigator.geolocation) {
+			return reject(new Error("This phone cannot share its location."))
+		}
+		if (!window.isSecureContext) {
+			return reject(
+				new Error("Location needs a secure (https) address. Ask your administrator."),
+			)
+		}
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				warmFix = { position, at: Date.now() }
+				resolve(toGeo(position))
+			},
+			(error) =>
+				reject(
+					new Error(
+						error.code === error.PERMISSION_DENIED
+							? "Location access is blocked. Allow it for this site in the browser settings."
+							: "Could not get your location. Step outside or turn on GPS and try again.",
+					),
+				),
+			{ enableHighAccuracy: true, timeout: 15_000, maximumAge: 30_000 },
+		)
+	})
+}
+
+/** Straight-line metres between two points (haversine), for "450 m away". */
+export function metresBetween(a, b) {
+	if (!a || !b) return null
+	const rad = (x) => (x * Math.PI) / 180
+	const dLat = rad(b.latitude - a.latitude)
+	const dLng = rad(b.longitude - a.longitude)
+	const h =
+		Math.sin(dLat / 2) ** 2 +
+		Math.cos(rad(a.latitude)) * Math.cos(rad(b.latitude)) * Math.sin(dLng / 2) ** 2
+	return 2 * 6371000 * Math.asin(Math.sqrt(h))
+}
+
+/** "80 m" / "2.4 km". */
+export function distanceLabel(metres) {
+	if (metres === null || metres === undefined) return ""
+	const m = Number(metres)
+	return m < 1000 ? `${Math.round(m)} m` : `${(m / 1000).toFixed(1)} km`
+}
+
+/** The last position the browser gave us, without asking for a new one. */
+export function lastKnownPosition() {
+	return warmFix ? toGeo(warmFix.position) : null
+}
+
 function toGeo(position) {
 	return {
 		latitude: position.coords.latitude,

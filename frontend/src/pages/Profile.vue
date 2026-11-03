@@ -384,6 +384,8 @@ const PERSONA_LABELS = {
 	driver: "Logistics",
 	store: "Store In-charge",
 	management: "Management",
+	field: "Field Sales",
+	field_manager: "Field Sales Manager",
 }
 
 const appVersion = __APP_VERSION__

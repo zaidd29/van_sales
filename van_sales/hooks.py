@@ -51,6 +51,10 @@ required_apps = ["erpnext"]
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
+# Plan Visit and Visit History on the Lead form, for whoever assigns leads
+# from the desk.
+doctype_js = {"Lead": "public/js/lead.js"}
+
 # Svg Icons
 # ------------------
 # include app icons in desk
@@ -84,6 +88,7 @@ role_home_page = {
 	"Van Delivery Driver": "van_sales",
 	"Van Store Incharge": "van_sales",
 	"Van Sales Manager": "van_sales",
+	"Field Sales User": "van_sales",
 }
 
 # application home page (will override Website Settings)
@@ -157,13 +162,15 @@ after_migrate = "van_sales.install.after_install"
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
+# A rep sees only their own lead visits; a manager sees their part of the
+# Sales Person tree. See van_sales/permissions.py.
+permission_query_conditions = {
+	"Lead Visit": "van_sales.permissions.lead_visit_query",
+}
+
+has_permission = {
+	"Lead Visit": "van_sales.permissions.lead_visit_has_permission",
+}
 
 # Document Events
 # ---------------
@@ -179,6 +186,13 @@ after_migrate = "van_sales.install.after_install"
 
 # Scheduled Tasks
 # ---------------
+
+# Yesterday's untouched plans become Missed, and a visit nobody checked out
+# of is closed at the end of its day, so the dashboard never counts them as
+# still in progress.
+scheduler_events = {
+	"daily": ["van_sales.tasks.close_past_visits"],
+}
 
 # scheduler_events = {
 # 	"all": [
@@ -224,6 +238,9 @@ after_migrate = "van_sales.install.after_install"
 # override_doctype_dashboards = {
 # 	"Task": "van_sales.task.get_dashboard_data"
 # }
+
+# Lead Visits under the Lead's Connections tab.
+override_doctype_dashboards = {"Lead": "van_sales.overrides.lead_dashboard"}
 
 # exempt linked doctypes from being automatically cancelled
 #

@@ -28,7 +28,16 @@
   "customer_section",
   "customer_creation_needs_approval",
   "customer_col",
-  "block_sales_over_credit_limit"
+  "block_sales_over_credit_limit",
+  "lead_visit_section",
+  "visit_allowed_radius",
+  "save_lead_location_on_first_visit",
+  "visit_notes_mandatory",
+  "close_past_visits",
+  "lead_visit_col",
+  "add_visit_notes_to_lead",
+  "update_lead_status_from_visit",
+  "allow_simulated_location"
  ],
  "fields": [
   {
@@ -184,12 +193,69 @@
    "fieldname": "block_sales_over_credit_limit",
    "fieldtype": "Check",
    "label": "Block Credit Sales Over Limit"
+  },
+  {
+   "fieldname": "lead_visit_section",
+   "fieldtype": "Section Break",
+   "label": "Lead Visits"
+  },
+  {
+   "default": "200",
+   "description": "A check-in further than this from the lead's pinned location is accepted but flagged Out of Range, and the rep must give a reason before checking out.",
+   "fieldname": "visit_allowed_radius",
+   "fieldtype": "Int",
+   "label": "Allowed Check-in Radius (Metres)"
+  },
+  {
+   "default": "1",
+   "description": "A lead with no map location is pinned where the rep first checks in, so every later visit can be verified against it.",
+   "fieldname": "save_lead_location_on_first_visit",
+   "fieldtype": "Check",
+   "label": "Pin Lead Location on First Visit"
+  },
+  {
+   "default": "1",
+   "fieldname": "visit_notes_mandatory",
+   "fieldtype": "Check",
+   "label": "Notes Required at Check-out"
+  },
+  {
+   "default": "1",
+   "description": "Planned visits from earlier days are marked Missed, and visits nobody checked out of are closed at the end of their day.",
+   "fieldname": "close_past_visits",
+   "fieldtype": "Check",
+   "label": "Close Past Visits Daily"
+  },
+  {
+   "fieldname": "lead_visit_col",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Each visit's notes are added to the lead's Notes, so the desk sees the history without opening every visit.",
+   "fieldname": "add_visit_notes_to_lead",
+   "fieldtype": "Check",
+   "label": "Copy Visit Notes to the Lead"
+  },
+  {
+   "default": "1",
+   "description": "Interested, Converted and Not Interested move an open lead along. A lead ERPNext has already moved on (Quotation, Customer) is never changed.",
+   "fieldname": "update_lead_status_from_visit",
+   "fieldtype": "Check",
+   "label": "Update Lead Status from Outcome"
+  },
+  {
+   "default": "0",
+   "description": "For demos only. When the phone cannot give a location, the rep may check in at a point near the lead instead. The visit is marked Simulated. Keep this off in production.",
+   "fieldname": "allow_simulated_location",
+   "fieldtype": "Check",
+   "label": "Allow Simulated Location (Demo)"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-08-08 14:00:00.000000",
+ "modified": "2026-11-03 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Van Sales",
  "name": "Van Sales Settings",
@@ -207,6 +273,14 @@
   {
    "read": 1,
    "role": "Van Sales User"
+  },
+  {
+   "read": 1,
+   "role": "Field Sales User"
+  },
+  {
+   "read": 1,
+   "role": "Field Sales Manager"
   }
  ],
  "sort_field": "modified",

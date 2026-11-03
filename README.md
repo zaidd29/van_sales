@@ -151,8 +151,10 @@ before it clears. It belongs on a held Payment Entry.
 **Almost nothing is a new doctype.** Deliveries are ERPNext `Delivery Trip`s,
 picking is `Pick List`, replenishment is `Material Request`, receipts are
 `Payment Entry`, returns are credit notes, and credit limits are ERPNext's
-own. The only additions are `Van Sales Profile` (which van a rep is on) and
-`Van Sales Settings` (site policy).
+own. The only additions are `Van Sales Profile` (which van a rep is on),
+`Van Sales Settings` (site policy), and `Lead Visit` (one field visit to an
+ERPNext Lead -- there is no ERPNext document for "I was there, and this is
+what happened").
 
 **Roles decide the app, not the build.** `van_sales.api.session.bootstrap`
 returns the home screen and tab set for the user's roles. Adding a role on
@@ -212,6 +214,74 @@ paid invoice.
    User, Stock User).
 4. Review **Van Sales Settings** for barcode, offline, credit and negative
    stock policy.
+
+## Lead visits (field sales)
+
+Sales persons visit the leads assigned to them; every visit is checked in
+with the phone's location and closed with an outcome and notes; managers see
+the activity sales person by sales person.
+
+**Who is who.** A user is a sales person through ERPNext's own chain:
+User → Employee (`user_id`) → Sales Person (`employee`). The Sales Person
+tree is the team: a manager sees the visits of everyone below them, and
+everyone when they are not in the tree themselves.
+
+| Role | Opens on | Sees |
+| --- | --- | --- |
+| Field Sales User | Visits | today's visits, check in / out, their leads, their history |
+| Field Sales Manager | Activity | sales person wise activity, the team's visit notes, all open leads |
+
+ERPNext's **Sales Manager** gets the same team scope on the desk.
+
+**The flow.**
+
+1. A lead is assigned on the desk (Lead Owner, or Assign To). Visits are
+   planned from the Lead form (**Lead Visits → Plan Visit**), from the
+   app's Leads tab, or by the rep starting an unplanned visit at the door.
+2. **Check in** reads a live, high-accuracy GPS fix and measures it against
+   the lead's pin (`van_latitude` / `van_longitude` on Lead). Further than
+   the allowed radius is accepted but flagged **Out of Range**. A lead with
+   no pin is pinned at its first check-in.
+3. **Check out** takes the outcome (Interested, Call Back, Not Available,
+   Not Interested, Converted), the notes, the reason if out of range, and
+   optionally the next visit, which is created as a Follow-up visit.
+4. The lead is updated: last visit, outcome, visit count, status (only
+   while it is still Lead / Open / Replied / Interested), and the notes are
+   added to its Notes tab.
+5. A daily job marks yesterday's untouched plans **Missed** and closes any
+   visit nobody checked out of.
+
+**Where managers look.**
+
+- `/van_sales` as a Field Sales Manager: Activity and Notes tabs.
+- Desk: **Lead Activity Dashboard** (`/app/lead-activity-dashboard`) --
+  cards, a per sales person table, daily trend, outcomes, a map of
+  check-ins coloured by in/out of range, and the latest notes.
+- Desk: **Sales Person Lead Activity** report, and the Lead Visit list.
+
+**Settings** live in Van Sales Settings → Lead Visits: allowed radius,
+pinning on first visit, notes required, copying notes to the lead,
+updating lead status, the daily close, and **Allow Simulated Location
+(Demo)**.
+
+**GPS needs https.** Browsers only hand a position to a secure page, so a
+phone opening `http://192.168.x.x` gets none. Serve the site over https for
+real use. For a demo on a LAN, turn on Allow Simulated Location: when the
+phone gives no fix the rep may check in at a point near the lead, and the
+visit is marked `Simulated (Demo)`. Keep it off in production.
+
+**Demo data.**
+
+```bash
+bench --site <site> execute van_sales.setup.demo_lead_visits.create_demo
+# on the morning of a demo, so "today" is the demo day:
+bench --site <site> execute van_sales.setup.demo_lead_visits.create_demo --kwargs "{'reset': 1}"
+```
+
+It creates a manager (`neha.kapoor@fieldsales.demo`) and four sales persons
+(`rahul.sharma`, `priya.nair`, `amit.patel`, `sneha.joshi`, all
+`@fieldsales.demo`, password `Demo@1234`), 24 leads around Mumbai and two
+weeks of visits, and turns simulated location on.
 
 ## Running the mobile app
 
@@ -320,6 +390,8 @@ Built and verified end to end against a live site:
 - profile read/write round-tripping to ERPNext, with role escalation and
   HR-owned fields rejected
 - sign out on this device, and sign out everywhere for a lost handset
+- lead visits: plan, GPS check-in with out-of-range flag, outcome and notes,
+  follow-up, lead updated; manager activity on the phone and the desk
 
 Not built yet: pre-sales orders and team-leader approval, driver trips and
 delivery confirmation, store picking and loading, the management dashboard,

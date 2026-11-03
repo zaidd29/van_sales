@@ -1,10 +1,12 @@
 """Custom fields owned by Van Sales.
 
-Two groups:
+Three groups:
 
 1. Van identity on Warehouse -- lets a warehouse be flagged as a van and carry
    its plate and default driver, so the app can name the van the rep is on.
-2. Provenance on the documents the mobile app posts -- the client-generated
+2. Location and visit summary on Lead -- where the lead is, so a visit
+   check-in can be measured against it, and the last visit at a glance.
+3. Provenance on the documents the mobile app posts -- the client-generated
    UID that makes an offline replay idempotent, plus where the post happened.
 
 ``van_client_uid`` is unique on purpose. Frappe coerces an empty unique value
@@ -143,6 +145,63 @@ def get_custom_fields() -> dict[str, list[dict]]:
 			},
 		]
 	}
+
+	# Where the lead is. A check-in is measured against this; a lead without
+	# it is pinned at its first visit when the setting allows. The summary
+	# fields are written by Lead Visit on check-out, never by hand.
+	fields["Lead"] = [
+		{
+			"fieldname": "van_visit_section",
+			"label": "Location & Visits",
+			"fieldtype": "Section Break",
+			"insert_after": "country",
+		},
+		{
+			"fieldname": "van_latitude",
+			"label": "Latitude",
+			"fieldtype": "Float",
+			"precision": "6",
+			"insert_after": "van_visit_section",
+			"description": "Where visit check-ins are verified against.",
+		},
+		{
+			"fieldname": "van_longitude",
+			"label": "Longitude",
+			"fieldtype": "Float",
+			"precision": "6",
+			"insert_after": "van_latitude",
+		},
+		{
+			"fieldname": "van_visit_col",
+			"fieldtype": "Column Break",
+			"insert_after": "van_longitude",
+		},
+		{
+			"fieldname": "van_last_visit_on",
+			"label": "Last Visit On",
+			"fieldtype": "Datetime",
+			"insert_after": "van_visit_col",
+			"read_only": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "van_last_visit_outcome",
+			"label": "Last Visit Outcome",
+			"fieldtype": "Data",
+			"insert_after": "van_last_visit_on",
+			"read_only": 1,
+			"no_copy": 1,
+			"in_standard_filter": 1,
+		},
+		{
+			"fieldname": "van_visit_count",
+			"label": "Completed Visits",
+			"fieldtype": "Int",
+			"insert_after": "van_last_visit_outcome",
+			"read_only": 1,
+			"no_copy": 1,
+		},
+	]
 
 	# Reason code on a returned line. It is what decides whether the goods go
 	# back into saleable van stock or into scrap, so it lives on the line

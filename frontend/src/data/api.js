@@ -56,6 +56,28 @@ export const api = {
 
 	changePassword: (args) => request(`${M}.profile.change_password`, { method: "POST", args }),
 
+	// Lead visits -------------------------------------------------------
+
+	myDay: () => request(`${M}.visits.get_my_day`),
+
+	myLeads: (search) => request(`${M}.visits.get_my_leads`, { args: { search } }),
+
+	myVisitHistory: (limit = 50) => request(`${M}.visits.get_my_history`, { args: { limit } }),
+
+	getVisit: (name) => request(`${M}.visits.get_visit`, { args: { name } }),
+
+	visitTeam: () => request(`${M}.visits.get_team`),
+
+	planVisit: (args) => request(`${M}.visits.plan_visit`, { method: "POST", args }),
+
+	checkIn: (args) => request(`${M}.visits.check_in`, { method: "POST", args }),
+
+	checkOut: (args) => request(`${M}.visits.check_out`, { method: "POST", args }),
+
+	cancelVisit: (visit) => request(`${M}.visits.cancel_visit`, { method: "POST", args: { visit } }),
+
+	leadActivity: (args = {}) => request(`${M}.lead_activity.get_dashboard_data`, { args }),
+
 	/**
 	 * Simple lookups go through the endpoint the desk itself uses, so
 	 * results, ordering and user permissions behave identically to a Link

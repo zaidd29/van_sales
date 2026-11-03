@@ -20,6 +20,8 @@ ROLE_HOMES = (
 	("Van Sales User", "van", "van_home"),
 	("Pre Sales Team Leader", "team_leader", "approvals"),
 	("Pre Sales User", "pre_sales", "presales_home"),
+	("Field Sales Manager", "field_manager", "lead_activity"),
+	("Field Sales User", "field", "visits"),
 	("Van Delivery Driver", "driver", "trip"),
 	("Van Store Incharge", "store", "picking"),
 	("Van Sales Manager", "management", "dashboard"),
@@ -59,6 +61,16 @@ PERSONA_TABS = {
 		("loading", "Load", "stock"),
 		("shortages", "Shortage", "alert"),
 		("requests", "Requests", "orders"),
+	],
+	"field": [
+		("visits", "Visits", "route"),
+		("leads", "Leads", "leads"),
+		("visit_history", "History", "history"),
+	],
+	"field_manager": [
+		("lead_activity", "Activity", "chart"),
+		("team_visits", "Notes", "orders"),
+		("leads", "Leads", "leads"),
 	],
 	"management": [
 		("dashboard", "Dashboard", "dashboard"),
@@ -224,4 +236,7 @@ def get_policy() -> dict:
 		"customer_creation_needs_approval": bool(
 			cint(setting("customer_creation_needs_approval", 1))
 		),
+		"visit_allowed_radius": cint(setting("visit_allowed_radius", 200)) or 200,
+		"visit_notes_mandatory": bool(cint(setting("visit_notes_mandatory", 1))),
+		"allow_simulated_location": bool(cint(setting("allow_simulated_location", 0))),
 	}

@@ -76,7 +76,15 @@ def _employee_for(user: str) -> dict | None:
 	if not name:
 		return None
 
-	fields = list(dict.fromkeys(READONLY_EMPLOYEE_FIELDS + EDITABLE_EMPLOYEE_FIELDS))
+	# employment_type and grade are added to Employee by hrms, which this app
+	# does not require. Reading a column the site lacks is an OperationalError,
+	# so ask only for what this site's Employee actually has.
+	meta = frappe.get_meta("Employee")
+	fields = [
+		f
+		for f in dict.fromkeys(READONLY_EMPLOYEE_FIELDS + EDITABLE_EMPLOYEE_FIELDS)
+		if f == "name" or meta.has_field(f)
+	]
 	employee = frappe.db.get_value("Employee", name, fields, as_dict=True)
 
 	if employee and employee.get("reports_to"):

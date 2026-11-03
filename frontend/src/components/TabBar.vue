@@ -66,6 +66,8 @@ const ICONS = {
 	dashboard: "grid",
 	chart: "bar-chart-2",
 	person: "user",
+	leads: "briefcase",
+	history: "clock",
 }
 
 function icon(name) {
